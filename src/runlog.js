@@ -16,6 +16,7 @@ export function buildRunRecord(run, meta, config = CONFIG) {
     deathPos: run.deathPos && { x: roundToTenth(run.deathPos.x), y: roundToTenth(run.deathPos.y) },
     itemsGot: { ...run.itemsGot },
     damageTaken: Object.fromEntries(Object.entries(run.damageTaken).map(([source, amount]) => [source, roundToTenth(amount)])),
+    chasersKilled: run.chasersKilled,
     outsideSec: run.outsideTicks / config.ticksPerSecond,
     note: meta.note ?? '',
   };

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>자기장 서바이벌</title>
-  <link rel="stylesheet" href="style.css?v=0.4">
+  <link rel="stylesheet" href="style.css?v=0.5">
 </head>
 <body>
   <main class="phone">
@@ -15,7 +15,7 @@
       <ul class="guide">
         <li><span class="dot zone"></span><b>붉은 구역</b> 안전 구역(푸른 땅) 밖에 있으면 체력이 계속 깎여요. 안전 구역은 점점 줄어들고, 줄어들기 10초 전에 점선 원으로 알려줘요.</li>
         <li><span class="dot bomb"></span><b>주황 원</b> 폭격 예고예요. 2.5초 뒤 터지고, 안에 있으면 큰 피해를 입어요.</li>
-        <li><span class="dot chaser"></span><b>보라 추적자</b> 쫓아와요. 닿으면 피해를 입어요. 장애물 뒤로 돌아서 따돌리세요.</li>
+        <li><span class="dot chaser"></span><b>보라 추적자</b> 쫓아와요. 닿으면 피해를 입어요. 장애물 뒤로 돌아 따돌리거나, 폭격 원 안으로 끌어들이면 쓰러뜨릴 수 있어요.</li>
         <li><span class="dot heal"></span><b>네모</b> 체력 +25</li>
         <li><span class="dot haste"></span><b>번개</b> 8초 동안 이동 속도 1.5배</li>
         <li><span class="dot shield"></span><b>별</b> 5초 동안 모든 피해 막기</li>
@@ -54,11 +54,13 @@
       </dl>
       <p id="send-status" class="hint" role="status"></p>
       <button id="btn-again" class="primary">한 번 더</button>
-      <input id="result-note" type="text" maxlength="100" placeholder="한 줄 의견 (선택, 기록 복사에 포함)">
-      <button id="btn-copy" class="secondary">기록 복사</button>
+      <input id="result-note" type="text" maxlength="100" placeholder="한 줄 의견 (선택)">
+      <button id="btn-note" class="secondary">의견 보내기</button>
+      <p id="note-status" class="hint" role="status"></p>
+      <button id="btn-copy" class="secondary">기록 복사 (저장이 안 될 때)</button>
       <p id="copy-status" class="hint" role="status"></p>
     </section>
   </main>
-  <script type="module" src="src/main.js?v=0.4"></script>
+  <script type="module" src="src/main.js?v=0.5"></script>
 </body>
 </html>

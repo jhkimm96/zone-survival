@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildInsertRequest, sendRunRecord } from '../src/remote.js';
+import { buildInsertRequest, buildNoteRequest, sendRunNote, sendRunRecord } from '../src/remote.js';
 
 const REMOTE = { url: 'https://example.supabase.co', publishableKey: 'sb_publishable_test' };
 const CONFIG = { remote: REMOTE };
@@ -87,4 +87,43 @@ test('설정이 비어 있으면 요청하지 않는다', async () => {
   const outcome = await sendRunRecord(record(), CONTEXT, fakeFetch, { remote: { url: '', publishableKey: '' } });
   assert.deepEqual(outcome, { ok: false, reason: '저장소 설정 없음' });
   assert.equal(called, false);
+});
+
+test('의견 요청은 run_notes 테이블에 판 정보와 함께 POST한다', () => {
+  const request = buildNoteRequest(record(), '추적자가 너무 빠르다', CONTEXT, CONFIG);
+  assert.equal(request.url, 'https://example.supabase.co/rest/v1/run_notes');
+  assert.equal(request.options.headers.apikey, 'sb_publishable_test');
+  assert.equal(request.options.headers.Authorization, undefined);
+  assert.deepEqual(JSON.parse(request.options.body), {
+    version: 'v0.4',
+    player: 'A',
+    run_number: 2,
+    seed: 3,
+    env: 'deployed',
+    note: '추적자가 너무 빠르다',
+  });
+});
+
+test('의견은 100자로 자르고 앞뒤 공백을 지운다', () => {
+  const body = JSON.parse(buildNoteRequest(record(), `  ${'가'.repeat(150)}  `, CONTEXT, CONFIG).options.body);
+  assert.equal(body.note.length, 100);
+});
+
+test('빈 의견은 요청하지 않는다', async () => {
+  let called = false;
+  const fakeFetch = async () => {
+    called = true;
+    return { ok: true, status: 201 };
+  };
+  assert.deepEqual(await sendRunNote(record(), '   ', CONTEXT, fakeFetch, CONFIG), { ok: false, reason: '의견이 비어 있음' });
+  assert.equal(called, false);
+});
+
+test('의견 전송 성공과 실패를 예외 없이 돌려준다', async () => {
+  assert.deepEqual(await sendRunNote(record(), '재밌다', CONTEXT, async () => ({ ok: true, status: 201 }), CONFIG), { ok: true });
+  assert.deepEqual(await sendRunNote(record(), '재밌다', CONTEXT, async () => ({ ok: false, status: 400 }), CONFIG), { ok: false, reason: 'HTTP 400' });
+  const failing = async () => {
+    throw new TypeError('Failed to fetch');
+  };
+  assert.deepEqual(await sendRunNote(record(), '재밌다', CONTEXT, failing, CONFIG), { ok: false, reason: '네트워크 오류' });
 });

@@ -2,7 +2,7 @@ import { CONFIG } from './config.js';
 import { createRun, step } from './game.js';
 import { createInput } from './input.js';
 import { drawRun } from './render.js';
-import { sendRunRecord } from './remote.js';
+import { sendRunNote, sendRunRecord } from './remote.js';
 import { buildRunRecord, toLogLine } from './runlog.js';
 import { stageIndexAt } from './zone.js';
 
@@ -39,6 +39,7 @@ const result = {
   note: document.getElementById('result-note'),
   copyStatus: document.getElementById('copy-status'),
   sendStatus: document.getElementById('send-status'),
+  noteStatus: document.getElementById('note-status'),
 };
 
 const input = createInput(canvas);
@@ -52,6 +53,7 @@ document.getElementById('version').textContent = `버전 ${CONFIG.version}`; // 
 document.getElementById('btn-start').addEventListener('click', startRun);
 document.getElementById('btn-again').addEventListener('click', startRun);
 document.getElementById('btn-copy').addEventListener('click', copyRecord);
+document.getElementById('btn-note').addEventListener('click', saveNoteRemotely);
 
 function setupCanvas() {
   const ratio = window.devicePixelRatio || 1;
@@ -131,6 +133,7 @@ function showResult(finishedRun) {
   result.runNumber.textContent = `${runNumber}번째 판`;
   result.note.value = '';
   result.copyStatus.textContent = '';
+  result.noteStatus.textContent = '';
   showScreen('result');
   saveRecordRemotely(lastRecord);
 }
@@ -138,14 +141,28 @@ function showResult(finishedRun) {
 // 판 기록을 자동 저장한다. 실패해도 게임은 계속되고, "기록 복사"로 예비 전달할 수 있다.
 async function saveRecordRemotely(record) {
   result.sendStatus.textContent = '기록 저장 중…';
-  const context = {
-    env: ['localhost', '127.0.0.1'].includes(location.hostname) ? 'local' : 'deployed',
-    device: window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'keyboard',
-  };
-  const outcome = await sendRunRecord(record, context);
+  const outcome = await sendRunRecord(record, runContext());
   result.sendStatus.textContent = outcome.ok
     ? '기록이 저장됐어요.'
     : `자동 저장에 실패했어요 (${outcome.reason}). 아래 "기록 복사"로 보내주세요.`;
+}
+
+// 한 줄 의견은 판 기록과 별도로, 보내기 버튼을 눌렀을 때만 저장한다.
+async function saveNoteRemotely() {
+  const record = lastRecord;
+  const noteBeingSent = result.note.value;
+  result.noteStatus.textContent = '의견 보내는 중…';
+  const outcome = await sendRunNote(record, noteBeingSent, runContext());
+  result.noteStatus.textContent = outcome.ok
+    ? '의견을 보냈어요. 고마워요!'
+    : `의견 전송에 실패했어요 (${outcome.reason}).`;
+}
+
+function runContext() {
+  return {
+    env: ['localhost', '127.0.0.1'].includes(location.hostname) ? 'local' : 'deployed',
+    device: window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'keyboard',
+  };
 }
 
 async function copyRecord() {

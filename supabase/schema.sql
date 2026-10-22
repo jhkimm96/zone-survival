@@ -28,3 +28,26 @@ create policy "runs_insert_only"
 
 -- select/update/delete 정책을 만들지 않으므로 anon은 조회와 수정이 불가능하다.
 grant insert on public.runs to anon;
+
+-- 한 줄 의견. 판 기록(runs)과 version, player, run_number, seed로 연결한다. 이 파일은 여러 번 실행해도 안전하다.
+create table if not exists public.run_notes (
+  id          bigint generated always as identity primary key,
+  created_at  timestamptz not null default now(),
+  version     text not null check (char_length(version) <= 20),
+  player      text not null check (char_length(player) <= 20),
+  run_number  int  not null check (run_number between 1 and 10000),
+  seed        int  not null,
+  env         text not null check (env in ('local', 'deployed')),
+  note        text not null check (char_length(note) between 1 and 100)
+);
+
+alter table public.run_notes enable row level security;
+
+drop policy if exists "run_notes_insert_only" on public.run_notes;
+create policy "run_notes_insert_only"
+  on public.run_notes
+  for insert
+  to anon
+  with check (true);
+
+grant insert on public.run_notes to anon;

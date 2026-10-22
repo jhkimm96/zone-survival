@@ -142,7 +142,8 @@ test('끝난 판의 기록에는 분석에 필요한 필드가 모두 있다', (
   assert.equal(record.deathStage, run.deathStage);
   assert.equal(record.deathCause, run.deathCause);
   assert.equal(record.player, 'A');
-  assert.equal(record.version, 'v0.4');
+  assert.equal(record.version, 'v0.5');
+  assert.equal(record.chasersKilled, run.chasersKilled);
   assert.equal(typeof record.deathPos.x, 'number');
   assert.deepEqual(Object.keys(record.damageTaken).sort(), ['bomb', 'chaser', 'zone']);
   assert.deepEqual(JSON.parse(toLogLine(record)), record);

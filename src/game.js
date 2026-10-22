@@ -24,6 +24,7 @@ export function createRun(seed, config = CONFIG) {
     nextBombSec: config.bombs.firstSec,
     nextChaserSec: config.chasers.firstSec,
     nextChaserId: 0,
+    chasersKilled: 0,
     threatRng: createRng(seed + THREAT_RNG_OFFSET),
     tick: 0,
     status: 'playing', // 'playing' | 'cleared' | 'dead'

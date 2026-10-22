@@ -28,7 +28,14 @@ export function spawnBombSalvoIfDue(run, config = CONFIG) {
   }
 }
 
-// 터질 때가 된 폭격은 원 안에 플레이어가 있으면 피해를 주고 사라진다.
+// 폭격은 추적자도 맞춘다. 추적자를 폭격 원 안으로 끌어들이면 처치할 수 있다.
+function killChasersInside(run, bomb) {
+  const survivors = run.chasers.filter((chaser) => Math.hypot(chaser.x - bomb.x, chaser.y - bomb.y) > bomb.radius);
+  run.chasersKilled += run.chasers.length - survivors.length;
+  run.chasers = survivors;
+}
+
+// 터질 때가 된 폭격은 원 안에 플레이어가 있으면 피해를 주고, 원 안의 추적자를 없애고 사라진다.
 export function detonateDueBombs(run, config = CONFIG) {
   const remaining = [];
   for (const bomb of run.bombs) {
@@ -38,6 +45,7 @@ export function detonateDueBombs(run, config = CONFIG) {
     }
     const caught = Math.hypot(run.x - bomb.x, run.y - bomb.y) <= bomb.radius;
     if (caught) takeDamage(run, 'bomb', config.bombs.damage);
+    killChasersInside(run, bomb);
   }
   run.bombs = remaining;
 }

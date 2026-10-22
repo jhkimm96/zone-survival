@@ -84,6 +84,40 @@ test('폭발 원 밖에 있으면 피해가 없다', () => {
   assert.equal(run.bombs.length, 0);
 });
 
+test('폭발 원 안에 있는 추적자는 죽고, 원 밖의 추적자는 남는다', () => {
+  const run = runAt(30);
+  run.x = 100;
+  run.y = 100;
+  run.bombs = [{ x: 130, y: 100, radius: 6, detonateTick: run.tick }];
+  run.chasers = [
+    { id: 0, x: 133, y: 100, expireTick: run.tick + 1000 },
+    { id: 1, x: 136, y: 100, expireTick: run.tick + 1000 },
+    { id: 2, x: 140, y: 100, expireTick: run.tick + 1000 },
+  ];
+  detonateDueBombs(run);
+  assert.deepEqual(run.chasers.map((chaser) => chaser.id), [2]);
+  assert.equal(run.chasersKilled, 2);
+});
+
+test('플레이어가 원 밖이어도 원 안의 추적자는 죽는다 (추적자를 끌어들이는 플레이)', () => {
+  const run = runAt(30);
+  run.bombs = [{ x: 120, y: 100, radius: 6, detonateTick: run.tick }];
+  run.chasers = [{ id: 0, x: 120, y: 100, expireTick: run.tick + 1000 }];
+  detonateDueBombs(run);
+  assert.equal(run.hp, 100);
+  assert.equal(run.chasers.length, 0);
+  assert.equal(run.chasersKilled, 1);
+});
+
+test('아직 터지지 않은 폭격은 추적자를 죽이지 않는다', () => {
+  const run = runAt(30);
+  run.bombs = [{ x: 120, y: 100, radius: 6, detonateTick: run.tick + 10 }];
+  run.chasers = [{ id: 0, x: 120, y: 100, expireTick: run.tick + 1000 }];
+  detonateDueBombs(run);
+  assert.equal(run.chasers.length, 1);
+  assert.equal(run.chasersKilled, 0);
+});
+
 test('보호 중에는 폭발 피해가 없다', () => {
   const run = runAt(30);
   run.shieldUntilTick = run.tick + 10;
