@@ -51,3 +51,9 @@ create policy "run_notes_insert_only"
   with check (true);
 
 grant insert on public.run_notes to anon;
+
+-- 익명 ID(브라우저가 처음 열 때 만든 무작위 값). 같은 사람의 여러 판을 묶는 데만 쓴다.
+alter table public.runs
+  add column if not exists player_id text check (player_id is null or char_length(player_id) <= 40);
+alter table public.run_notes
+  add column if not exists player_id text check (player_id is null or char_length(player_id) <= 40);

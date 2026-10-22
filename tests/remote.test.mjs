@@ -11,6 +11,7 @@ function record(overrides = {}) {
     version: 'v0.4',
     seed: 3,
     player: 'A',
+    playerId: 'abc-123',
     runNumber: 2,
     cleared: false,
     surviveSec: 61.5,
@@ -39,6 +40,7 @@ test('본문은 분석용 칸, 실행 환경(env, device), 기록 전체(record)
   const body = JSON.parse(buildInsertRequest(record(), { env: 'local', device: 'keyboard' }, CONFIG).options.body);
   assert.equal(body.version, 'v0.4');
   assert.equal(body.player, 'A');
+  assert.equal(body.player_id, 'abc-123');
   assert.equal(body.run_number, 2);
   assert.equal(body.seed, 3);
   assert.equal(body.cleared, false);
@@ -97,6 +99,7 @@ test('의견 요청은 run_notes 테이블에 판 정보와 함께 POST한다', 
   assert.deepEqual(JSON.parse(request.options.body), {
     version: 'v0.4',
     player: 'A',
+    player_id: 'abc-123',
     run_number: 2,
     seed: 3,
     env: 'deployed',

@@ -66,6 +66,16 @@ test('기록이 없으면 [미확인]으로 쓴다', () => {
   assert.match(formatReport([]), /\[미확인\]/);
 });
 
+test('플레이어 수는 익명 ID 기준으로 센다 (닉네임이 같아도 ID가 다르면 다른 사람, ID가 없으면 라벨 기준)', () => {
+  const summary = summarize([
+    record({ player: '민수', playerId: 'id-1' }),
+    record({ player: '민수', playerId: 'id-1' }),
+    record({ player: '민수', playerId: 'id-2' }),
+    record({ player: 'A', playerId: undefined }),
+  ]);
+  assert.equal(summary.playerCount, 3);
+});
+
 test('죽은 판의 사망 원인을 원인별로 센다 (원인 기록이 없는 옛 기록은 unknown)', () => {
   const summary = summarize([
     record({ deathCause: 'zone' }),

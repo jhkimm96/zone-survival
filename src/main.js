@@ -1,5 +1,6 @@
 import { CONFIG } from './config.js';
 import { createRun, step } from './game.js';
+import { loadIdentity, playerLabel, rememberNickname } from './identity.js';
 import { createInput } from './input.js';
 import { drawRun } from './render.js';
 import { sendRunNote, sendRunRecord } from './remote.js';
@@ -11,7 +12,11 @@ const MAX_CATCH_UP_MS = 500; // 탭이 숨겨졌다 돌아와도 한꺼번에 �
 const NOTE_MAX_LENGTH = 100;
 
 const params = new URLSearchParams(location.search);
-const player = params.get('p') || 'self';
+const storage = browserStorage();
+const identity = loadIdentity(storage, params);
+let nickname = identity.nickname;
+const nicknameInput = document.getElementById('nickname');
+nicknameInput.value = nickname;
 const baseSeed = Number(params.get('seed')) || 1;
 
 const screens = {
@@ -50,10 +55,22 @@ let lastHp = CONFIG.startHp;
 
 setupCanvas();
 document.getElementById('version').textContent = `버전 ${CONFIG.version}`; // 옛 파일이 캐시에 남았는지 알아보는 표시
-document.getElementById('btn-start').addEventListener('click', startRun);
+document.getElementById('btn-start').addEventListener('click', () => {
+  nickname = rememberNickname(storage, nicknameInput.value);
+  startRun();
+});
 document.getElementById('btn-again').addEventListener('click', startRun);
 document.getElementById('btn-copy').addEventListener('click', copyRecord);
 document.getElementById('btn-note').addEventListener('click', saveNoteRemotely);
+
+// localStorage에 접근하는 것만으로 오류가 나는 환경(시크릿 모드 등)에서는 아무것도 저장하지 않는 저장소를 쓴다
+function browserStorage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return { getItem: () => null, setItem: () => {} };
+  }
+}
 
 function setupCanvas() {
   const ratio = window.devicePixelRatio || 1;
@@ -122,7 +139,7 @@ function flashWhenHurt(currentRun) {
 }
 
 function showResult(finishedRun) {
-  lastRecord = buildRunRecord(finishedRun, { player, runNumber });
+  lastRecord = buildRunRecord(finishedRun, { player: playerLabel(nickname), playerId: identity.playerId, runNumber });
   const itemTotal = Object.values(finishedRun.itemsGot).reduce((sum, count) => sum + count, 0);
   result.title.textContent = lastRecord.cleared ? '클리어' : '게임 종료';
   result.time.textContent = formatClock(Math.floor(lastRecord.surviveSec));

@@ -137,7 +137,8 @@ test('추적자에게 죽으면 사망 원인이 chaser이다', () => {
 
 test('끝난 판의 기록에는 분석에 필요한 필드가 모두 있다', () => {
   const run = runIdle(1);
-  const record = buildRunRecord(run, { player: 'A', runNumber: 2, note: '어려웠다' });
+  const record = buildRunRecord(run, { player: 'A', playerId: 'abc-123', runNumber: 2, note: '어려웠다' });
+  assert.equal(record.playerId, 'abc-123');
   assert.equal(record.cleared, false);
   assert.equal(record.deathStage, run.deathStage);
   assert.equal(record.deathCause, run.deathCause);

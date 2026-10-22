@@ -56,7 +56,7 @@ export function summarize(records) {
   const runCount = records.length;
   return {
     runCount,
-    playerCount: new Set(records.map((record) => record.player)).size,
+    playerCount: new Set(records.map((record) => record.playerId ?? record.player)).size, // 같은 닉네임이어도 익명 ID가 다르면 다른 사람
     clearedCount,
     deathsByStage,
     deathsByCause,

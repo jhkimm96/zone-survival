@@ -31,6 +31,7 @@ h1 { margin: 4px 0; font-size: 26px; font-weight: 500; }
 .dot.zone { background: #7a2d2d; }
 .guide { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.5; text-align: left; width: 100%; }
 .guide b { font-weight: 500; margin-right: 4px; }
+.nick { display: flex; flex-direction: column; gap: 4px; width: 100%; font-size: 12px; color: #9fb2c5; }
 .effects { min-height: 18px; margin: 0; font-size: 13px; font-weight: 500; color: #f2b63d; }
 canvas.hurt { outline: 3px solid #e24b4a; outline-offset: -3px; }
 button {

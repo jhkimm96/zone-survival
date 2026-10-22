@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>자기장 서바이벌</title>
-  <link rel="stylesheet" href="style.css?v=0.5">
+  <link rel="stylesheet" href="style.css?v=0.6">
 </head>
 <body>
   <main class="phone">
@@ -21,6 +21,10 @@
         <li><span class="dot shield"></span><b>별</b> 5초 동안 모든 피해 막기</li>
       </ul>
       <p class="hint">이동: 방향키 / WASD / 화면을 누른 채 밀기<br>우측 상단 지도에서 안전 구역, 아이템, 위협을 볼 수 있어요.</p>
+      <label class="nick">
+        <span>닉네임 (선택) 실명 말고 아무 이름이나 괜찮아요. 이 기기에서는 기억해요.</span>
+        <input id="nickname" type="text" maxlength="12" placeholder="예: 민수" autocomplete="off">
+      </label>
       <button id="btn-start" class="primary">시작</button>
       <p id="version" class="hint"></p>
     </section>
@@ -61,6 +65,6 @@
       <p id="copy-status" class="hint" role="status"></p>
     </section>
   </main>
-  <script type="module" src="src/main.js?v=0.5"></script>
+  <script type="module" src="src/main.js?v=0.6"></script>
 </body>
 </html>

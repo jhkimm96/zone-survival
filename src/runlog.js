@@ -8,6 +8,7 @@ export function buildRunRecord(run, meta, config = CONFIG) {
     version: config.version,
     seed: run.seed,
     player: meta.player,
+    playerId: meta.playerId,
     runNumber: meta.runNumber,
     cleared: run.status === 'cleared',
     surviveSec: run.tick / config.ticksPerSecond,

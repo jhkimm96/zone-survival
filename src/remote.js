@@ -10,6 +10,7 @@ export function buildInsertRequest(record, context, config = CONFIG) {
   const body = {
     version: record.version,
     player: String(record.player).slice(0, PLAYER_LABEL_MAX_LENGTH),
+    player_id: record.playerId ?? null,
     run_number: record.runNumber,
     seed: record.seed,
     cleared: record.cleared,
@@ -40,6 +41,7 @@ export function buildNoteRequest(record, note, context, config = CONFIG) {
   const body = {
     version: record.version,
     player: String(record.player).slice(0, PLAYER_LABEL_MAX_LENGTH),
+    player_id: record.playerId ?? null,
     run_number: record.runNumber,
     seed: record.seed,
     env: context.env,
