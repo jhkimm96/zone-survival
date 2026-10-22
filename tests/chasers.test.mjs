@@ -21,22 +21,22 @@ test('40초 전에는 추적자가 없다', () => {
   assert.equal(run.chasers.length, 0);
 });
 
-test('40초에 첫 추적자가 플레이어에서 35m 떨어진 곳에 생기고 다음은 20초 뒤다', () => {
+test('40초에 첫 추적자가 플레이어에서 35m 떨어진 곳에 생기고 다음은 12초 뒤다', () => {
   const run = runAt(40);
   spawnChaserIfDue(run);
   assert.equal(run.chasers.length, 1);
   assert.ok(Math.abs(distance(run.chasers[0], run) - 35) < 1e-6);
-  assert.equal(run.nextChaserSec, 60);
+  assert.equal(run.nextChaserSec, 52);
   assert.equal(run.chasers[0].expireTick, run.tick + 45 * TICKS_PER_SECOND);
 });
 
-test('동시에 4마리를 넘지 않는다', () => {
+test('동시에 6마리를 넘지 않는다', () => {
   const run = runAt(40);
   for (let count = 0; count < 10; count += 1) {
     run.nextChaserSec = 0;
     spawnChaserIfDue(run);
   }
-  assert.equal(run.chasers.length, 4);
+  assert.equal(run.chasers.length, 6);
 });
 
 test('수명(45초)이 지나면 사라진다', () => {
