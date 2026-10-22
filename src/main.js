@@ -5,6 +5,7 @@ import { createInput } from './input.js';
 import { drawRun } from './render.js';
 import { sendRunNote, sendRunRecord } from './remote.js';
 import { buildRunRecord, toLogLine } from './runlog.js';
+import { pickRunSeed } from './seed.js';
 import { stageIndexAt } from './zone.js';
 
 const CANVAS_CSS_PIXELS = 360;
@@ -17,7 +18,6 @@ const identity = loadIdentity(storage, params);
 let nickname = identity.nickname;
 const nicknameInput = document.getElementById('nickname');
 nicknameInput.value = nickname;
-const baseSeed = Number(params.get('seed')) || 1;
 
 const screens = {
   start: document.getElementById('screen-start'),
@@ -85,7 +85,7 @@ function showScreen(name) {
 
 function startRun() {
   runNumber += 1;
-  const thisRun = createRun(baseSeed + runNumber - 1);
+  const thisRun = createRun(pickRunSeed(params, runNumber));
   run = thisRun;
   lastHp = thisRun.hp;
   showScreen('play');
