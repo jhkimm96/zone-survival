@@ -1,0 +1,9 @@
+{
+  "name": "zone-survival",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "report": "node tools/report.mjs"
+  }
+}
