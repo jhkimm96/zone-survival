@@ -43,7 +43,7 @@ test('가만히 있으면 어떤 시드에서도 클리어하지 못한다', () 
   for (let seed = 1; seed <= 60; seed += 1) {
     const run = runIdle(seed);
     assert.equal(run.status, 'dead', `seed ${seed}`);
-    assert.ok(['zone', 'bomb', 'chaser'].includes(run.deathCause), `seed ${seed} cause ${run.deathCause}`);
+    assert.ok(['zone', 'bomb', 'chaser', 'boss', 'ruby', 'shockwave'].includes(run.deathCause), `seed ${seed} cause ${run.deathCause}`);
   }
 });
 
@@ -135,6 +135,16 @@ test('추적자에게 죽으면 사망 원인이 chaser이다', () => {
   assert.equal(run.deathCause, 'chaser');
 });
 
+test('보스에게 죽으면 사망 원인이 boss이다', () => {
+  const run = freeRunAt(100, 100);
+  run.tick = 900;
+  run.hp = 0.5;
+  run.boss = { x: 101, y: 100, nextSkillTick: 100000, nextSkill: 'ruby', rubyFireTick: null };
+  step(run, null);
+  assert.equal(run.status, 'dead');
+  assert.equal(run.deathCause, 'boss');
+});
+
 test('끝난 판의 기록에는 분석에 필요한 필드가 모두 있다', () => {
   const run = runIdle(1);
   const record = buildRunRecord(run, { player: 'A', playerId: 'abc-123', runNumber: 2, note: '어려웠다' });
@@ -146,6 +156,6 @@ test('끝난 판의 기록에는 분석에 필요한 필드가 모두 있다', (
   assert.equal(record.version, 'v0.8');
   assert.equal(record.chasersKilled, run.chasersKilled);
   assert.equal(typeof record.deathPos.x, 'number');
-  assert.deepEqual(Object.keys(record.damageTaken).sort(), ['bomb', 'chaser', 'zone']);
+  assert.deepEqual(Object.keys(record.damageTaken).sort(), ['bomb', 'boss', 'chaser', 'zone']);
   assert.deepEqual(JSON.parse(toLogLine(record)), record);
 });

@@ -44,6 +44,27 @@ export function pushOutOfObstacles(position, radius, obstacles) {
   return { x, y };
 }
 
+// 추적자와 보스의 등장 자리. center에서 distance만큼 angle 방향으로 떨어진, 월드 안이고 장애물과 겹치지 않는 곳.
+export function placeAround(center, angle, distance, radius, obstacles, config = CONFIG) {
+  const spot = keepInsideWorld(
+    { x: center.x + Math.cos(angle) * distance, y: center.y + Math.sin(angle) * distance },
+    radius,
+    config,
+  );
+  return pushOutOfObstacles(spot, radius, obstacles);
+}
+
+// 추적자와 보스가 쓰는 이동. 장애물은 통과하지 못하고 월드 밖으로 나가지 않는다.
+export function stepToward(position, target, stepMeters, radius, obstacles, config = CONFIG) {
+  const dx = target.x - position.x;
+  const dy = target.y - position.y;
+  const gap = Math.hypot(dx, dy);
+  if (gap === 0) return { x: position.x, y: position.y };
+  const moved = { x: position.x + (dx / gap) * stepMeters, y: position.y + (dy / gap) * stepMeters };
+  const clearOfObstacles = pushOutOfObstacles(moved, radius, obstacles);
+  return keepInsideWorld(clearOfObstacles, radius, config);
+}
+
 export function keepInsideWorld(position, radius, config = CONFIG) {
   const clamp = (value) => Math.min(Math.max(value, radius), config.worldSize - radius);
   return { x: clamp(position.x), y: clamp(position.y) };

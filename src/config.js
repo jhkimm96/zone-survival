@@ -56,6 +56,15 @@ export const CONFIG = {
     damagePerSec: 20,
     spawnDistance: 35,
   },
+  // 죽지 않는 보스 한 마리. 플레이어보다 느려서 몸으로는 피할 수 있다.
+  boss: {
+    appearSec: 130, // 마지막 원(반지름 20m)이 된 뒤
+    speedMetersPerSec: 3.5,
+    radius: 1.6,
+    contactRadius: 2,
+    damagePerSec: 20,
+    spawnDistance: 25,
+  },
   view: { sizeMeters: 40, minimapPixels: 90 },
   // 공개용(publishable) 키라 브라우저 코드에 있어도 된다. 권한은 supabase/schema.sql의 RLS가 insert만 허용한다.
   remote: {

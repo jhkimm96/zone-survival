@@ -82,10 +82,11 @@ test('죽은 판의 사망 원인을 원인별로 센다 (원인 기록이 없�
     record({ deathCause: 'bomb' }),
     record({ deathCause: 'bomb' }),
     record({ deathCause: 'chaser' }),
+    record({ deathCause: 'ruby' }),
     record({ deathCause: undefined }),
     record({ cleared: true, deathStage: null, deathCause: null }),
   ]);
-  assert.deepEqual(summary.deathsByCause, { zone: 1, bomb: 2, chaser: 1, unknown: 1 });
+  assert.deepEqual(summary.deathsByCause, { zone: 1, bomb: 2, chaser: 1, boss: 0, ruby: 1, shockwave: 0, unknown: 1 });
 });
 
 test('리포트에 사망 원인을 분모와 함께 쓴다', () => {

@@ -28,6 +28,7 @@ h1 { margin: 4px 0; font-size: 26px; font-weight: 500; }
 .dot.shield { background: #f2b63d; }
 .dot.bomb { background: #ff8a3d; border-radius: 50%; }
 .dot.chaser { background: #a259ff; border-radius: 50%; }
+.dot.boss { background: #6a2fd1; border-radius: 50%; box-shadow: inset 0 3px 0 #f5c518; }
 .dot.zone { background: #7a2d2d; }
 .guide { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.5; text-align: left; width: 100%; }
 .guide b { font-weight: 500; margin-right: 4px; }

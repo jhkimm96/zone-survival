@@ -57,3 +57,21 @@ alter table public.runs
   add column if not exists player_id text check (player_id is null or char_length(player_id) <= 40);
 alter table public.run_notes
   add column if not exists player_id text check (player_id is null or char_length(player_id) <= 40);
+
+-- v0.8 보스: 사망 원인에 보스(boss)와 보스 기술(ruby, shockwave)을 허용한다. 행은 지우지 않고 규칙만 넓힌다.
+-- 제한 이름을 몰라도 되도록 death_cause를 검사하는 기존 제한을 찾아 지운 뒤 새로 건다.
+begin;
+do $$
+declare
+  existing_name text;
+begin
+  for existing_name in
+    select conname from pg_constraint
+    where conrelid = 'public.runs'::regclass and contype = 'c' and pg_get_constraintdef(oid) like '%death_cause%'
+  loop
+    execute format('alter table public.runs drop constraint %I', existing_name);
+  end loop;
+end $$;
+alter table public.runs add constraint runs_death_cause_check
+  check (death_cause in ('zone', 'bomb', 'chaser', 'boss', 'ruby', 'shockwave'));
+commit;

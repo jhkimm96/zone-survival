@@ -33,7 +33,7 @@ const hud = {
   stage: document.getElementById('hud-stage'),
   effects: document.getElementById('hud-effects'),
 };
-const CAUSE_LABELS = { zone: '자기장', bomb: '폭격', chaser: '추적자' };
+const CAUSE_LABELS = { zone: '자기장', bomb: '폭격', chaser: '추적자', boss: '보스', ruby: '보스의 루비', shockwave: '보스의 충격파' };
 const HURT_FLASH_MS = 150;
 const result = {
   title: document.getElementById('result-title'),

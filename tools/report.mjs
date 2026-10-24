@@ -38,7 +38,7 @@ export function parseLogLines(text) {
 
 export function summarize(records) {
   const deathsByStage = { 1: 0, 2: 0, 3: 0 };
-  const deathsByCause = { zone: 0, bomb: 0, chaser: 0, unknown: 0 };
+  const deathsByCause = { zone: 0, bomb: 0, chaser: 0, boss: 0, ruby: 0, shockwave: 0, unknown: 0 };
   const itemsGot = { heal: 0, haste: 0, shield: 0 };
   let clearedCount = 0;
   let surviveSecTotal = 0;
@@ -94,7 +94,7 @@ function formatVersionSection(version, records) {
     `- 신뢰: ${trust}`,
     `- 클리어율 [측정]: ${summary.clearedCount}/${runCount}`,
     `- 사망 단계 [측정]: 1단계 ${summary.deathsByStage[1]}/${deathsTotal}, 2단계 ${summary.deathsByStage[2]}/${deathsTotal}, 3단계 ${summary.deathsByStage[3]}/${deathsTotal}`,
-    `- 사망 원인 [측정]: 자기장 ${summary.deathsByCause.zone}/${deathsTotal}, 폭격 ${summary.deathsByCause.bomb}/${deathsTotal}, 적 ${summary.deathsByCause.chaser}/${deathsTotal}${summary.deathsByCause.unknown > 0 ? `, 원인 기록 없음 ${summary.deathsByCause.unknown}/${deathsTotal}` : ''}`,
+    `- 사망 원인 [측정]: 자기장 ${summary.deathsByCause.zone}/${deathsTotal}, 폭격 ${summary.deathsByCause.bomb}/${deathsTotal}, 적 ${summary.deathsByCause.chaser}/${deathsTotal}, 보스 몸 ${summary.deathsByCause.boss}/${deathsTotal}, 루비 ${summary.deathsByCause.ruby}/${deathsTotal}, 충격파 ${summary.deathsByCause.shockwave}/${deathsTotal}${summary.deathsByCause.unknown > 0 ? `, 원인 기록 없음 ${summary.deathsByCause.unknown}/${deathsTotal}` : ''}`,
     `- 아이템 획득 [측정]: ${itemShares}`,
     `- 평균 생존 [측정]: ${summary.meanSurviveSec.toFixed(1)}초 (${runCount}판)`,
     `- 평균 영역 밖 시간 [측정]: ${summary.meanOutsideSec.toFixed(1)}초 (${runCount}판)`,

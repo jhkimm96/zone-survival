@@ -113,7 +113,7 @@ const bots = {
 for (const [name, makeDecide] of Object.entries(bots)) {
   let cleared = 0;
   let surviveTotal = 0;
-  const causes = { zone: 0, bomb: 0, chaser: 0 };
+  const causes = { zone: 0, bomb: 0, chaser: 0, boss: 0, ruby: 0, shockwave: 0 };
   for (let seed = 1; seed <= SEEDS; seed += 1) {
     const run = createRun(seed);
     const decide = makeDecide();

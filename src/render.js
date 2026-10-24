@@ -19,6 +19,10 @@ const COLORS = {
   shield: '#f2b63d',
   bomb: '#ff8a3d',
   chaser: '#a259ff',
+  boss: '#6a2fd1',
+  crown: '#f5c518',
+  crownEdge: '#8a6400',
+  ruby: '#e0115f',
   minimapBackground: 'rgba(13, 22, 32, 0.85)',
   minimapBorder: '#4a5d72',
 };
@@ -57,6 +61,7 @@ export function drawRun(ctx, run, pixelSize, config = CONFIG) {
   for (const item of activeItems(run, config)) drawItem(ctx, item, pixelsPerMeter);
   for (const bomb of run.bombs) drawBomb(ctx, bomb, run, pixelsPerMeter, config);
   for (const chaser of run.chasers) drawChaser(ctx, chaser, pixelsPerMeter);
+  if (run.boss) drawBoss(ctx, run.boss, pixelsPerMeter, config);
   drawPlayer(ctx, run, pixelsPerMeter);
   ctx.restore();
 
@@ -157,6 +162,48 @@ function drawChaser(ctx, chaser, pixelsPerMeter) {
   ctx.lineWidth = 1.5 / pixelsPerMeter;
   ctx.beginPath();
   ctx.arc(chaser.x, chaser.y, 1.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+}
+
+function drawBoss(ctx, boss, pixelsPerMeter, config) {
+  const radius = config.boss.radius;
+  ctx.fillStyle = COLORS.boss;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2 / pixelsPerMeter;
+  ctx.beginPath();
+  ctx.arc(boss.x, boss.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  drawCrown(ctx, boss.x, boss.y - radius * 0.82, radius * 1.15, radius * 0.95, pixelsPerMeter);
+}
+
+// 왕관 밑변 가운데가 (centerX, baseY). 루비는 왕관 가운데에 박혀 있다.
+function drawCrown(ctx, centerX, baseY, width, height, pixelsPerMeter) {
+  const corners = [
+    [-0.5, 0], [-0.5, -0.55], [-0.25, -0.2], [0, -1], [0.25, -0.2], [0.5, -0.55], [0.5, 0],
+  ];
+  ctx.fillStyle = COLORS.crown;
+  ctx.strokeStyle = COLORS.crownEdge;
+  ctx.lineWidth = 1.5 / pixelsPerMeter;
+  ctx.beginPath();
+  for (const [across, up] of corners) ctx.lineTo(centerX + across * width, baseY + up * height);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  drawRuby(ctx, centerX, baseY - height * 0.32, height * 0.26, pixelsPerMeter);
+}
+
+function drawRuby(ctx, centerX, centerY, size, pixelsPerMeter) {
+  ctx.fillStyle = COLORS.ruby;
+  ctx.strokeStyle = '#ffd1e0';
+  ctx.lineWidth = 1 / pixelsPerMeter;
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY - size);
+  ctx.lineTo(centerX + size * 0.8, centerY);
+  ctx.lineTo(centerX, centerY + size);
+  ctx.lineTo(centerX - size * 0.8, centerY);
+  ctx.closePath();
   ctx.fill();
   ctx.stroke();
 }
@@ -279,6 +326,12 @@ function drawMinimap(ctx, run, zone, upcoming, pixelSize, config) {
     ctx.fillStyle = COLORS.chaser;
     ctx.beginPath();
     ctx.arc(chaser.x, chaser.y, 3 / pixelsPerMeter, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (run.boss) {
+    ctx.fillStyle = COLORS.crown;
+    ctx.beginPath();
+    ctx.arc(run.boss.x, run.boss.y, 4 / pixelsPerMeter, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.fillStyle = COLORS.player;
