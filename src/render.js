@@ -14,7 +14,7 @@ const COLORS = {
   obstacleEdge: '#6f8399',
   player: '#3fb68b',
   playerEdge: '#bff0dc',
-  heal: '#e0607e',
+  heal: '#4ade5a',
   haste: '#5aa9f0',
   shield: '#f2b63d',
   bomb: '#ff8a3d',
@@ -54,7 +54,7 @@ export function drawRun(ctx, run, pixelSize, config = CONFIG) {
   drawZoneOutlines(ctx, zone, upcoming, pixelsPerMeter);
   ctx.restore();
   for (const obstacle of run.obstacles) drawObstacle(ctx, obstacle, pixelsPerMeter);
-  for (const item of activeItems(run, config)) drawItem(ctx, item);
+  for (const item of activeItems(run, config)) drawItem(ctx, item, pixelsPerMeter);
   for (const bomb of run.bombs) drawBomb(ctx, bomb, run, pixelsPerMeter, config);
   for (const chaser of run.chasers) drawChaser(ctx, chaser, pixelsPerMeter);
   drawPlayer(ctx, run, pixelsPerMeter);
@@ -161,15 +161,31 @@ function drawChaser(ctx, chaser, pixelsPerMeter) {
   ctx.stroke();
 }
 
-function drawItem(ctx, item) {
+function drawItem(ctx, item, pixelsPerMeter) {
   ctx.fillStyle = COLORS[item.kind];
   if (item.kind === 'heal') {
-    ctx.fillRect(item.x - ITEM_RADIUS_METERS, item.y - ITEM_RADIUS_METERS, ITEM_RADIUS_METERS * 2, ITEM_RADIUS_METERS * 2);
+    drawCross(ctx, item.x, item.y, ITEM_RADIUS_METERS, pixelsPerMeter);
   } else if (item.kind === 'shield') {
     drawStar(ctx, item.x, item.y, ITEM_RADIUS_METERS * 1.2);
   } else {
     drawBolt(ctx, item.x, item.y, ITEM_RADIUS_METERS * 1.2);
   }
+}
+
+// 플레이어도 초록이라 흰 테두리로 구분한다
+function drawCross(ctx, centerX, centerY, radius, pixelsPerMeter) {
+  const half = radius * 0.375;
+  const corners = [
+    [-half, -radius], [half, -radius], [half, -half], [radius, -half], [radius, half], [half, half],
+    [half, radius], [-half, radius], [-half, half], [-radius, half], [-radius, -half], [-half, -half],
+  ];
+  ctx.beginPath();
+  for (const [offsetX, offsetY] of corners) ctx.lineTo(centerX + offsetX, centerY + offsetY);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1.5 / pixelsPerMeter;
+  ctx.stroke();
 }
 
 function drawStar(ctx, centerX, centerY, radius) {

@@ -1,7 +1,7 @@
 // 규칙·수치표의 값을 한곳에 둔다. 밸런스 수정은 이 파일만 바꾸고, 바꿀 때마다 version을 올린다.
 // 길이는 미터, 시간은 초 단위다.
 export const CONFIG = {
-  version: 'v0.7',
+  version: 'v0.8',
   worldSize: 200,
   runSeconds: 180,
   ticksPerSecond: 30,

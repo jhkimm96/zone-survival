@@ -23,7 +23,7 @@ h1 { margin: 4px 0; font-size: 26px; font-weight: 500; }
 .big { margin: 4px 0 0; font-size: 44px; font-weight: 500; }
 .legend { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; font-size: 12px; }
 .dot { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; }
-.dot.heal { background: #e0607e; }
+.dot.heal { background: #4ade5a; }
 .dot.haste { background: #5aa9f0; }
 .dot.shield { background: #f2b63d; }
 .dot.bomb { background: #ff8a3d; border-radius: 50%; }
