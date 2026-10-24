@@ -64,6 +64,10 @@ export const CONFIG = {
     contactRadius: 2,
     damagePerSec: 20,
     spawnDistance: 25,
+    firstSkillDelaySec: 4,
+    skillEverySec: 8, // 루비와 충격파를 번갈아 쓰므로 같은 기술은 16초마다
+    ruby: { chargeSec: 1, speedMetersPerSec: 8, radius: 0.5, damage: 20, lifetimeSec: 4 },
+    shockwave: { warningSec: 1.5, radius: 7, damage: 25 },
   },
   view: { sizeMeters: 40, minimapPixels: 90 },
   // 공개용(publishable) 키라 브라우저 코드에 있어도 된다. 권한은 supabase/schema.sql의 RLS가 insert만 허용한다.

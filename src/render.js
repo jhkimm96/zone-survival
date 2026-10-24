@@ -26,6 +26,8 @@ const COLORS = {
   minimapBackground: 'rgba(13, 22, 32, 0.85)',
   minimapBorder: '#4a5d72',
 };
+const BOMB_RGB = '255, 138, 61';
+const SHOCKWAVE_RGB = '162, 89, 255';
 const GRID_SPACING_METERS = 10;
 const ITEM_RADIUS_METERS = 1.3;
 const PLAYER_DRAW_RADIUS_METERS = 0.9; // 충돌 반경(0.6m)보다 크게 그려 화면에서 잘 보이게 한다
@@ -59,9 +61,13 @@ export function drawRun(ctx, run, pixelSize, config = CONFIG) {
   ctx.restore();
   for (const obstacle of run.obstacles) drawObstacle(ctx, obstacle, pixelsPerMeter);
   for (const item of activeItems(run, config)) drawItem(ctx, item, pixelsPerMeter);
-  for (const bomb of run.bombs) drawBomb(ctx, bomb, run, pixelsPerMeter, config);
+  for (const bomb of run.bombs) drawWarningCircle(ctx, bomb, config.bombs.warningSec, BOMB_RGB, run, pixelsPerMeter, config);
+  for (const shockwave of run.shockwaves) {
+    drawWarningCircle(ctx, shockwave, config.boss.shockwave.warningSec, SHOCKWAVE_RGB, run, pixelsPerMeter, config);
+  }
   for (const chaser of run.chasers) drawChaser(ctx, chaser, pixelsPerMeter);
-  if (run.boss) drawBoss(ctx, run.boss, pixelsPerMeter, config);
+  if (run.boss) drawBoss(ctx, run.boss, blinkOn, pixelsPerMeter, config);
+  for (const shot of run.rubyShots) drawRuby(ctx, shot.x, shot.y, config.boss.ruby.radius, pixelsPerMeter);
   drawPlayer(ctx, run, pixelsPerMeter);
   ctx.restore();
 
@@ -143,15 +149,15 @@ function drawObstacle(ctx, obstacle, pixelsPerMeter) {
   ctx.stroke();
 }
 
-// 폭발이 가까워질수록 원이 진해진다
-function drawBomb(ctx, bomb, run, pixelsPerMeter, config) {
-  const warningTicks = Math.round(config.bombs.warningSec * config.ticksPerSecond);
-  const progress = Math.min(1, Math.max(0, 1 - (bomb.detonateTick - run.tick) / warningTicks));
-  ctx.fillStyle = `rgba(255, 138, 61, ${0.12 + 0.38 * progress})`;
-  ctx.strokeStyle = COLORS.bomb;
+// 폭격과 보스 충격파의 예고 원. 터질 때가 가까워질수록 진해진다.
+function drawWarningCircle(ctx, circle, warningSec, rgb, run, pixelsPerMeter, config) {
+  const warningTicks = Math.round(warningSec * config.ticksPerSecond);
+  const progress = Math.min(1, Math.max(0, 1 - (circle.detonateTick - run.tick) / warningTicks));
+  ctx.fillStyle = `rgba(${rgb}, ${0.12 + 0.38 * progress})`;
+  ctx.strokeStyle = `rgb(${rgb})`;
   ctx.lineWidth = 2 / pixelsPerMeter;
   ctx.beginPath();
-  ctx.arc(bomb.x, bomb.y, bomb.radius, 0, Math.PI * 2);
+  ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 }
@@ -166,7 +172,7 @@ function drawChaser(ctx, chaser, pixelsPerMeter) {
   ctx.stroke();
 }
 
-function drawBoss(ctx, boss, pixelsPerMeter, config) {
+function drawBoss(ctx, boss, blinkOn, pixelsPerMeter, config) {
   const radius = config.boss.radius;
   ctx.fillStyle = COLORS.boss;
   ctx.strokeStyle = '#ffffff';
@@ -175,11 +181,12 @@ function drawBoss(ctx, boss, pixelsPerMeter, config) {
   ctx.arc(boss.x, boss.y, radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
-  drawCrown(ctx, boss.x, boss.y - radius * 0.82, radius * 1.15, radius * 0.95, pixelsPerMeter);
+  const rubyGlowing = boss.rubyFireTick !== null && blinkOn; // 루비 충전 중 깜빡임이 발사 예고다
+  drawCrown(ctx, boss.x, boss.y - radius * 0.82, radius * 1.15, radius * 0.95, rubyGlowing, pixelsPerMeter);
 }
 
 // 왕관 밑변 가운데가 (centerX, baseY). 루비는 왕관 가운데에 박혀 있다.
-function drawCrown(ctx, centerX, baseY, width, height, pixelsPerMeter) {
+function drawCrown(ctx, centerX, baseY, width, height, rubyGlowing, pixelsPerMeter) {
   const corners = [
     [-0.5, 0], [-0.5, -0.55], [-0.25, -0.2], [0, -1], [0.25, -0.2], [0.5, -0.55], [0.5, 0],
   ];
@@ -191,7 +198,15 @@ function drawCrown(ctx, centerX, baseY, width, height, pixelsPerMeter) {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-  drawRuby(ctx, centerX, baseY - height * 0.32, height * 0.26, pixelsPerMeter);
+  const rubyY = baseY - height * 0.32;
+  const rubySize = height * 0.26;
+  if (rubyGlowing) {
+    ctx.fillStyle = 'rgba(255, 60, 110, 0.45)';
+    ctx.beginPath();
+    ctx.arc(centerX, rubyY, rubySize * 2.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  drawRuby(ctx, centerX, rubyY, rubySize, pixelsPerMeter);
 }
 
 function drawRuby(ctx, centerX, centerY, size, pixelsPerMeter) {

@@ -1,5 +1,13 @@
 import { spawnBombSalvoIfDue, detonateDueBombs } from './bombs.js';
-import { damageFromBoss, moveBoss, spawnBossIfDue } from './boss.js';
+import {
+  damageFromBoss,
+  detonateDueShockwaves,
+  fireChargedRuby,
+  moveBoss,
+  moveRubyShots,
+  spawnBossIfDue,
+  useBossSkillIfDue,
+} from './boss.js';
 import { damageFromChasers, moveChasers, spawnChaserIfDue } from './chasers.js';
 import { CONFIG } from './config.js';
 import { takeDamage } from './damage.js';
@@ -23,6 +31,8 @@ export function createRun(seed, config = CONFIG) {
     bombs: [],
     chasers: [],
     boss: null,
+    rubyShots: [],
+    shockwaves: [],
     nextBombSec: config.bombs.firstSec,
     nextChaserSec: config.chasers.firstSec,
     nextChaserId: 0,
@@ -37,7 +47,7 @@ export function createRun(seed, config = CONFIG) {
     shieldUntilTick: 0,
     outsideTicks: 0,
     itemsGot: { heal: 0, haste: 0, shield: 0 },
-    damageTaken: { zone: 0, bomb: 0, chaser: 0, boss: 0 },
+    damageTaken: { zone: 0, bomb: 0, chaser: 0, boss: 0, ruby: 0, shockwave: 0 },
     lastDamageSource: null,
     deathStage: null,
     deathCause: null,
@@ -66,6 +76,10 @@ export function step(run, direction, config = CONFIG) {
   spawnBossIfDue(run, config);
   moveBoss(run, config);
   damageFromBoss(run, config);
+  useBossSkillIfDue(run, config);
+  fireChargedRuby(run, config);
+  moveRubyShots(run, config);
+  detonateDueShockwaves(run, config);
   takeZoneDamage(run, sec, config);
   run.tick += 1;
   finishIfOver(run, sec, config);

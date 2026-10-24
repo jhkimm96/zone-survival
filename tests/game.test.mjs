@@ -156,6 +156,6 @@ test('끝난 판의 기록에는 분석에 필요한 필드가 모두 있다', (
   assert.equal(record.version, 'v0.8');
   assert.equal(record.chasersKilled, run.chasersKilled);
   assert.equal(typeof record.deathPos.x, 'number');
-  assert.deepEqual(Object.keys(record.damageTaken).sort(), ['bomb', 'boss', 'chaser', 'zone']);
+  assert.deepEqual(Object.keys(record.damageTaken).sort(), ['bomb', 'boss', 'chaser', 'ruby', 'shockwave', 'zone']);
   assert.deepEqual(JSON.parse(toLogLine(record)), record);
 });
